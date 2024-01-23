@@ -1,0 +1,7 @@
+*.zip
+run-tests.sh
+
+__pycache__/
+
+screenshot*/
+test-report*/

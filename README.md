@@ -1,14 +1,14 @@
-# Appium Server Side Python Samples
+# zhaoge-cards
 
-This folder contains a sample Appium server side test case for Android
-and iOS environments. To read more about server and client Appium runs
-in BitBar Cloud, check our online documentation from `https://support.smartbear.com/bitbar/docs/testing-with-bitbar/automated-testing/appium/index.html`.
+This project is dedicated to run automated UI scripts on [Cards! Ahoy](https://cardsahoy.metalist.io/) to minimize
+human factor in the game. Inspired from this BitBar github [subfolder](https://github.com/bitbar/test-samples/tree/master/samples/testing-frameworks/appium/server-side/python).
 
 ## Apps
 
-You will find the necessary applications in:
- - Android: [bitbar-sample-app.apk](../../../../../apps/android/bitbar-sample-app.apk)
- - iOS:  [bitbar-ios-sample.ipa](../../../../../apps/ios/bitbar-ios-sample.ipa)
+You will need these necessary applications to run the project:
+ - Emulator: specifically `adb`, should comes with emulator.
+ - Emulated Android: have Cards Ahoy! pre-installed.
+ - Python: preferably conda (python environemnt provision).
 
 ## Folder Content
 
@@ -21,13 +21,4 @@ This folder contains the following files:
 * `requirements.txt` lists the required Python packages that need to be
   installed for the test to be executable, e.g. AppiumPythonClient.
 
-* `run-tests_ios.sh` and `run-tests_android.sh` are environment
-  specific Bash shell scripts that need to be renamed to
-  `run-tests.sh` so it will be executed by BitBar Cloud when the test
-  is started on some device. Depending on environment you are testing,
-  you'll need to use the iOS or Android version of this script.
-
-* `create-zip.sh` is a script that packages the test files into a zip
-  file. The output of this file needs to be uploaded to your server
-  side test run. You need to provide parameter `ios` or `android`
-  depending on which environment you want to use.
+* `prepare.sh` prepares the environment so so the script `run.sh` is runnable from command line.

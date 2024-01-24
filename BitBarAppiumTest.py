@@ -25,33 +25,33 @@ from selenium.webdriver.common.actions import interaction
 from misc import log, _create_dir_if_not_exist
 
 
-SCREENSHOT_MAX_COUNT = 1000 # in seconds
-SCREENSHOT_CLEANER_INTERVAL = 60 * 120 # in seconds
+SCREENSHOT_MAX_COUNT = 1000  # in seconds
+SCREENSHOT_CLEANER_INTERVAL = 60 * 120  # in seconds
 
 
 class BitBarAppiumTest(unittest.TestCase):
     # Appium
     driver = None
-    
+
     appium_server_url = None
     screenshot_dir = None
     # _screenshot_count = 0
-    
+
     _capabilities = None
 
     ########################################
-    #### unittest
+    # unittest
     ########################################
 
     def setUp(self,
               appium_server_url=None,
               screenshot_dir=None,
-              
+
               platform_name=None,
               platform_version=None,
               automation_name=None,
               auto_grant_permission=None,
-              
+
               udid=None,
               device_name=None,
               app_package=None,
@@ -59,14 +59,16 @@ class BitBarAppiumTest(unittest.TestCase):
 
               full_reset=None,
               no_reset=None,
-              
+
               bundle_id=None,
-              application_file=None, 
+              application_file=None,
               browser_name=None
-    ):
+              ):
         # Setup fields
-        self.appium_server_url = appium_server_url or os.environ.get('APPIUM_URL') or 'http://127.0.0.1:4723'
-        self.screenshot_dir = _create_dir_if_not_exist(screenshot_dir or 'screenshots', 'screenshots')
+        self.appium_server_url = appium_server_url or os.environ.get(
+            'APPIUM_URL') or 'http://127.0.0.1:4723'
+        self.screenshot_dir = _create_dir_if_not_exist(
+            screenshot_dir or 'screenshots', 'screenshots')
         self._capabilities = {
             "platformName": platform_name or os.environ.get('APPIUM_PLATFORM_NAME') or 'Android',
             "appium:platformVersion": platform_version or os.environ.get("APPIUM_PLATFORM_VERSION") or "13",
@@ -82,7 +84,7 @@ class BitBarAppiumTest(unittest.TestCase):
         browser_name = browser_name or os.environ.get('APPIUM_BROWSER')
         app_package = app_package or os.environ.get('APPIUM_PACKAGE')
         app_activity = app_activity or os.environ.get('APPIUM_ACTIVITY')
-        
+
         if bundle_id is not None:
             # IOS
             log(f'Using bundleId {self.bundle_id}')
@@ -111,10 +113,10 @@ class BitBarAppiumTest(unittest.TestCase):
         # Initialize WebDriver
         log(f'Connecting WebDriver to {self.appium_server_url}')
         self.driver = webdriver.Remote(
-            self.appium_server_url, 
+            self.appium_server_url,
             options=UiAutomator2Options().load_capabilities(self._capabilities)
         )
-        
+
         # Wait max 30 seconds for elements
         self.driver.implicitly_wait(30)
         log('WebDriver response received')
@@ -122,16 +124,16 @@ class BitBarAppiumTest(unittest.TestCase):
     def tearDown(self):
         if self.driver:
             self.driver.quit()
-    
+
     ########################################
-    #### utils
+    # utils
     ########################################
 
     def get_driver(self, **kwargs):
         if not self.driver:
             self.setUp(**kwargs)
         return self.driver
-    
+
     def _isPlatformName(self, name: str) -> bool:
         return self._capabilities.platform_name and self._capabilities.platform_name.upper() == name.upper()
 
@@ -144,11 +146,15 @@ class BitBarAppiumTest(unittest.TestCase):
     def _get_window_dimension(self):
         _size = self.driver.get_window_size()
         return _size["height"], _size["width"]
-    
+
     ########################################
-    #### screen manipulation
+    # screen manipulation
     ########################################
 
-    def tap(self, x: Optional[int]=None, y: Optional[int]=None):
+    def tap(self, x: Optional[int] = None, y: Optional[int] = None):
         height, width = self._get_window_dimension()
         self.driver.tap([(x or width / 2, y or height / 2)])
+
+    def swipe_down(self):
+        # TODO: check this
+        self.driver.find_image_occurrence()

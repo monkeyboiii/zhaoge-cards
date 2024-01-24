@@ -14,6 +14,7 @@ import os
 import pprint
 import unittest
 import threading
+from datetime import datetime
 
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
@@ -25,8 +26,8 @@ from selenium.webdriver.common.actions import interaction
 from misc import log, _create_dir_if_not_exist
 
 
-SCREENSHOT_MAX_COUNT = 1000  # in seconds
-SCREENSHOT_CLEANER_INTERVAL = 60 * 120  # in seconds
+SCREENSHOT_MAX_COUNT = os.environ.get('SCREENSHOT_MAX_COUNT') or 1000
+SCREENSHOT_CLEANER_INTERVAL = os.environ.get('SCREENSHOT_CLEANER_INTERVAL') or 120  # in seconds
 
 
 class BitBarAppiumTest(unittest.TestCase):
@@ -64,6 +65,8 @@ class BitBarAppiumTest(unittest.TestCase):
               application_file=None,
               browser_name=None
               ):
+        
+        #
         # Setup fields
         self.appium_server_url = appium_server_url or os.environ.get(
             'APPIUM_URL') or 'http://127.0.0.1:4723'
@@ -79,7 +82,8 @@ class BitBarAppiumTest(unittest.TestCase):
             "appium:udid": udid or os.environ.get("APPIUM_UDID") or "emulator-5554"
         }
 
-        bundle_id = bundle_id or os.environ.get('APPIUM_BUNDLEID')
+        #
+        # Application action        bundle_id = bundle_id or os.environ.get('APPIUM_BUNDLEID')
         application_file = application_file or os.environ.get('APPIUM_APPFILE')
         browser_name = browser_name or os.environ.get('APPIUM_BROWSER')
         app_package = app_package or os.environ.get('APPIUM_PACKAGE')
@@ -103,6 +107,8 @@ class BitBarAppiumTest(unittest.TestCase):
         else:
             log(f'No application selected in particular')
 
+        # 
+        # Application state
         if full_reset is not None:
             self._capabilities['appium:fullReset'] = full_reset
         if no_reset is not None:
@@ -110,6 +116,7 @@ class BitBarAppiumTest(unittest.TestCase):
 
         log(f'Got desired capabilities:\n{pprint.pformat(self._capabilities)}')
 
+        #
         # Initialize WebDriver
         log(f'Connecting WebDriver to {self.appium_server_url}')
         self.driver = webdriver.Remote(
@@ -117,6 +124,7 @@ class BitBarAppiumTest(unittest.TestCase):
             options=UiAutomator2Options().load_capabilities(self._capabilities)
         )
 
+        #
         # Wait max 30 seconds for elements
         self.driver.implicitly_wait(30)
         log('WebDriver response received')
@@ -154,6 +162,14 @@ class BitBarAppiumTest(unittest.TestCase):
     def tap(self, x: Optional[int] = None, y: Optional[int] = None):
         height, width = self._get_window_dimension()
         self.driver.tap([(x or width / 2, y or height / 2)])
+
+    def save_screenshot(self):
+        filename = f'{datetime.now().strftime("%H:%M:%S.%f")[:-3]}'
+        path = os.path.join(self.screenshot_dir, filename)
+        if not self.driver.save_screenshot(path):
+            log(f'Screenshot ${filename} not saved')
+        else:
+            log(f'Screenshot ${filename} saved to {self.screenshot_dir}')
 
     def swipe_down(self):
         # TODO: check this

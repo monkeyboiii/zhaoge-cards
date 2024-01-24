@@ -53,5 +53,5 @@ export APPIUM_ACTIVITY=com.unity3d.player.UnityPlayerActivity
 export IMAGE_RECOGNITION_DIR=images
 export IMAGE_REFRESH_RATE=10 # per minute
 export SCREENSHOT_MAX_COUNT=1000
-export SCREENSHOT_CLEANER_INTERVAL=100 # seconds
+export SCREENSHOT_CLEANER_INTERVAL=120 # seconds
 

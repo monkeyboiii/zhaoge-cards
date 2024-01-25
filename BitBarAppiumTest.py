@@ -14,6 +14,7 @@ import os
 import pprint
 import unittest
 import threading
+from uuid import uuid4
 from datetime import datetime
 
 from appium import webdriver
@@ -27,7 +28,8 @@ from misc import log, _create_dir_if_not_exist
 
 
 SCREENSHOT_MAX_COUNT = os.environ.get('SCREENSHOT_MAX_COUNT') or 1000
-SCREENSHOT_CLEANER_INTERVAL = os.environ.get('SCREENSHOT_CLEANER_INTERVAL') or 120  # in seconds
+SCREENSHOT_CLEANER_INTERVAL = os.environ.get(
+    'SCREENSHOT_CLEANER_INTERVAL') or 120  # in seconds
 
 
 class BitBarAppiumTest(unittest.TestCase):
@@ -65,7 +67,7 @@ class BitBarAppiumTest(unittest.TestCase):
               application_file=None,
               browser_name=None
               ):
-        
+
         #
         # Setup fields
         self.appium_server_url = appium_server_url or os.environ.get(
@@ -107,7 +109,7 @@ class BitBarAppiumTest(unittest.TestCase):
         else:
             log(f'No application selected in particular')
 
-        # 
+        #
         # Application state
         if full_reset is not None:
             self._capabilities['appium:fullReset'] = full_reset
@@ -163,14 +165,14 @@ class BitBarAppiumTest(unittest.TestCase):
         height, width = self._get_window_dimension()
         self.driver.tap([(x or width / 2, y or height / 2)])
 
-    def save_screenshot(self):
-        filename = f'{datetime.now().strftime("%H:%M:%S.%f")[:-3]}'
+    def save_screenshot(self, header='default', include_time=False):
+        filename = f'{header}'
+        if include_time:
+            filename = f'{filename}-{datetime.now().strftime("%H-%M-%S-%f")[:-3]}'
+        filename = f'{filename}-{uuid4().hex[:6]}.png'
         path = os.path.join(self.screenshot_dir, filename)
         if not self.driver.save_screenshot(path):
             log(f'Screenshot ${filename} not saved')
         else:
             log(f'Screenshot ${filename} saved to {self.screenshot_dir}')
-
-    def swipe_down(self):
-        # TODO: check this
-        self.driver.find_image_occurrence()
+        return path
